@@ -1,0 +1,416 @@
+<html>
+<head>
+	<title>bigBusiness</title>
+
+	<script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+	<link rel="stylesheet" href="https://www.amcharts.com/lib/3/ammap.css" type="text/css" media="all" />
+	<script src="https://www.amcharts.com/lib/3/ammap.js"></script>
+	<script src="https://www.amcharts.com/lib/3/maps/js/worldLow.js"></script>
+	<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+	<style type="text/css">
+		#mapdiv {
+		  background: #eee;
+		}
+	</style>
+
+</head>
+
+<body>
+	<div id="mapdiv" style="width: 100%; height: 100%;"></div>
+	<div class="container">
+    <div class="row clearfix">
+		<div class="col-md-6 column">
+			<table class="table table-bordered table-hover" id="tab_logic">
+				<thead>
+					<tr >
+						<th class="text-center">
+							#
+						</th>
+						<th class="text-center">
+							Job Description
+						</th>
+						<th class="text-center">
+							Google Maps Link
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr id='addr0'>
+						<td>
+						1
+						</td>
+						<td>
+						<input type="text" name='name0'  placeholder='Job Description' class="form-control"/>
+						</td>
+						<td>
+						<input type="text" name='mail0' placeholder='Google Maps Link' class="form-control"/>
+						</td>
+					</tr>
+                    <tr id='addr1'></tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="col-md-6">
+			<button type="button" class="btn btn-primary btn-sm">Small button</button>
+			<button type="button" class="btn btn-primary btn-sm">Small button</button>
+			<button type="button" class="btn btn-primary btn-sm">Small button</button>
+			<button type="button" class="btn btn-primary btn-sm">Small button</button>
+			<button type="button" class="btn btn-primary btn-sm">Small button</button>
+			<button type="button" class="btn btn-primary btn-sm">Small button</button>
+
+		</div>
+	</div>
+	<div class="col-md-6">
+		<a id="add_row" class="btn btn-default pull-left">Add Row</a><a id='delete_row' class="pull-right btn btn-default">Delete Row</a>
+	</div>
+</div>
+
+
+	<script type="text/javascript">
+
+	   $(document).ready(function(){
+	      var i=1;
+	     $("#add_row").click(function(){
+	      $('#addr'+i).html("<td>"+ (i+1) +"</td><td><input name='name"+i+"' type='text' placeholder='Name' class='form-control input-md'  /> </td><td><input  name='mail"+i+"' type='text' placeholder='Mail'  class='form-control input-md'></td><td><input  name='mobile"+i+"' type='text' placeholder='Mobile'  class='form-control input-md'></td>");
+
+	      $('#tab_logic').append('<tr id="addr'+(i+1)+'"></tr>');
+	      i++; 
+	  });
+	     $("#delete_row").click(function(){
+	    	 if(i>1){
+			 $("#addr"+(i-1)).html('');
+			 i--;
+			 }
+		 });
+
+		});
+	/**
+	 * Let's put an SVG icon into a variable so that we can reuse it for multiple markers
+	 */
+	var icon= "M21.25,8.375V28h6.5V8.375H21.25zM12.25,28h6.5V4.125h-6.5V28zM3.25,28h6.5V12.625h-6.5V28z";
+	var markerScale = 0.5;
+	// svg path for target icon
+	var targetSVG = "M9,0C4.029,0,0,4.029,0,9s4.029,9,9,9s9-4.029,9-9S13.971,0,9,0z M9,15.93 c-3.83,0-6.93-3.1-6.93-6.93S5.17,2.07,9,2.07s6.93,3.1,6.93,6.93S12.83,15.93,9,15.93 M12.5,9c0,1.933-1.567,3.5-3.5,3.5S5.5,10.933,5.5,9S7.067,5.5,9,5.5 S12.5,7.067,12.5,9z";
+	var circle = "M10 10 h 30 v 30 h -30 Z";
+	
+	var citys = [
+					/*0*/[35.3332586,-119.169785, 'Bakersfield, CA'], 
+					/*1*/[34.0203662,-118.9722372, 'Los Angeles, CA'], 
+					/*2*/[41.8339043,-88.0123523, 'Chicago, IL'], 
+					/*3*/[35.7902527,-97.6355324, 'Cushing, OK'],
+					/*4*/[47.6919,-95.4311, 'ClearBrook, MN'],
+					/*5*/[44.9708543,-93.401565, 'Minneapolis, MN'],
+					/*6*/[46.8083, -100.7837, 'Bismarck, ND'],
+					/*7*/[40.8206, -98.6001, 'Wood River, NE'],
+					/*8*/[32.7767, -96.7970, 'Dallas, TX'],
+					/*9*/[40.7426, -84.1052, 'Lima, OH'],
+					/*10*/[42.2697, -104.7416, 'Guernsey, WY'],
+					/*11*/[38.6270, -90.1994, 'St. Louis, MO'],
+					/*12*/[29.7604, -95.3698, 'Houston, TX'],
+					/*13*/[33.9137, -98.4934, 'Wichita Falls, TX'],
+					/*14*/[37.7749, -122.4194, 'San Francisco, CA'],
+					/*15*/[31.9973, -102.0779, 'Midland, TX'],
+					/*16*/[27.8006, -97.3964, 'Corpus Christi, TX'],
+					/*17*/[35.6678, -101.3974, 'Borger, TX'],
+					/*18*/[43.3869, -98.8445, 'Platte, SD'],
+					/*19*/[29.8850, -93.9399, 'Port Arthur, TX'],
+					/*20*/[34.4208, -119.6982, 'Santa Barbara, CA'],
+					/*21*/[40.8754, -73.1527, 'St. James, NY'],
+					/*22*/[38.7553, -89.0953, 'Patoka, IL'],
+					/*23*/[40.7608, -111.8910, 'Salt Lake City, UT'],
+					/*24*/[47.6588, -117.4260, 'Spokane, WA']
+				];
+	var pipeRelationships = [
+		//Bakersfield to Los Angeles
+		{ID: 'C11', LatArray: [citys[0][0], citys[1][0]], LonArray: [citys[0][1], citys[1][1]], status: true, performance: 1, flowrate: 800},
+		//Chicago to Cushing
+		{ID: 'C12', LatArray: [citys[2][0], citys[3][0]], LonArray: [citys[2][1], citys[3][1]], status: true, performance: 1, flowrate: 575},
+		//ClearBrook to Minneapolis
+		{ID: 'C13', LatArray: [citys[4][0], citys[5][0]], LonArray: [citys[4][1], citys[5][1]], status: true, performance: 1, flowrate: 200},
+		//ClearBrook to Bismarck
+		{ID: 'C14', LatArray: [citys[4][0], citys[6][0]], LonArray: [citys[4][1], citys[6][1]], status: true, performance: 1, flowrate: 125},
+		//Cushing to Wood River
+		{ID: 'C15', LatArray: [citys[3][0], citys[7][0]], LonArray: [citys[3][1], citys[7][1]], status: true, performance: 1, flowrate: 275},
+		//Dallas to Lima
+		{ID: 'C16', LatArray: [citys[8][0], citys[9][0]], LonArray: [citys[8][1], citys[9][1]], status: true, performance: 1, flowrate: 250},
+		//Guernsey to Chicago
+		{ID: 'C18', LatArray: [citys[10][0], citys[2][0]], LonArray: [citys[10][1], citys[2][1]], status: true, performance: 1, flowrate: 800},
+		//Guernsey to St. Louis
+		{ID: 'C19', LatArray: [citys[10][0], citys[11][0]], LonArray: [citys[10][1], citys[11][1]], status: true, performance: 1, flowrate: 800},
+		//Houston to Wichita Falls
+		{ID: 'C20', LatArray: [citys[12][0], citys[13][0]], LonArray: [citys[12][1], citys[13][1]], status: true, performance: 1, flowrate: 800},
+		//Los Angeles to San Franisco
+		{ID: 'C22', LatArray: [citys[1][0], citys[14][0]], LonArray: [citys[1][1], citys[14][1]], status: true, performance: 1, flowrate: 425},
+		//Midland to Corpus Christi
+		{ID: 'C24', LatArray: [citys[15][0], citys[16][0]], LonArray: [citys[15][1], citys[16][1]], status: true, performance: 1, flowrate: 275},
+		//Midland to Cushing
+		{ID: 'C25', LatArray: [citys[15][0], citys[3][0]], LonArray: [citys[15][1], citys[3][1]], status: true, performance: 1, flowrate: 400},
+		//Midland to Borger
+		{ID: 'C26', LatArray: [citys[15][0], citys[17][0]], LonArray: [citys[15][1], citys[17][1]], status: true, performance: 1, flowrate: 150},
+		//Midland to Houston
+		{ID: 'C28', LatArray: [citys[15][0], citys[12][0]], LonArray: [citys[15][1], citys[12][1]], status: true, performance: 1, flowrate: 310},
+		//Minneapolis to St. Louis
+		{ID: 'C29', LatArray: [citys[5][0], citys[11][0]], LonArray: [citys[5][1], citys[11][1]], status: true, performance: 1, flowrate: 300},
+		//Platte to Wichita Falls
+		{ID: 'C32', LatArray: [citys[18][0], citys[13][0]], LonArray: [citys[18][1], citys[13][1]], status: true, performance: 1, flowrate: 425},
+		//Port Arthur to Midland
+		{ID: 'C33', LatArray: [citys[19][0], citys[15][0]], LonArray: [citys[19][1], citys[15][1]], status: true, performance: 1, flowrate: 125},
+		//Santa Barbara to Houston
+		{ID: 'C36', LatArray: [citys[20][0], citys[12][0]], LonArray: [citys[20][1], citys[12][1]], status: true, performance: 1, flowrate: 125},
+		//St. James to Patoka
+		{ID: 'C37', LatArray: [citys[21][0], citys[22][0]], LonArray: [citys[21][1], citys[22][1]], status: true, performance: 1, flowrate: 500},
+		//Salt Lake City to Spokane
+		{ID: 'C39', LatArray: [citys[23][0], citys[24][0]], LonArray: [citys[23][1], citys[24][1]], status: true, performance: 1, flowrate: 100},
+
+	];
+	var green = '#228B22';
+	var red = '#FF0000';
+	var yellow = '#ffff00'
+	function createLines(pipeList){
+		var pipeLines=[];
+		//Create Markers object for each city
+		for (var i=0; i< pipeList.length ; i++){
+			pipeLines.push( {
+		      id: pipeList[i].ID,
+		      title: pipeRelationships[i].flowrate*pipeRelationships[i].performance + ' barrels/day',
+		      arc: 0,
+		      thickness: 2,
+		      alpha: 0.3,
+		      color: green,
+		      latitudes: pipeList[i].LatArray,
+		      longitudes: pipeList[i].LonArray
+	    
+		    } );
+		}
+		return pipeLines;
+	}
+	var pipeLines = createLines(pipeRelationships);
+	function createMarkers(citys, pipeList){
+		var markers=[];
+		
+		//Create Markers object for each city
+		for (var i=0; i< citys.length ; i++){
+			markers.push( {
+		      id: citys[i][2],
+		      svgPath: targetSVG,
+		      title: citys[i][2],
+		      latitude: citys[i][0],
+		      longitude: citys[i][1],
+		      scale: 0.5
+		    } );
+		}
+			
+		return markers;
+	}
+	var markers = createMarkers(citys, pipeRelationships);
+	//Create animations
+	var normVal = 1000;
+	function createAnimation(pipeList){
+		var animations = [];
+		
+
+		//Create Animations for each pipeLine
+		for (var j = 0; j< pipeList.length; j++) {
+			animations.push({
+			svgPath: circle,
+		      positionOnLine: 0,
+		      color: green,
+		      alpha: 0.5,
+		      animateAlongLine: pipeList[j].status,
+		      animationDuration: normVal/(pipeList[j].flowrate*pipeList[j].performance),
+		      lineId: pipeList[j].ID,
+		      flipDirection: true,
+		      loop: true,
+		      scale: 0.3,
+		      positionScale: 1
+			});
+		}
+			
+		return animations;
+	}
+	var animations = createAnimation(pipeRelationships);
+	//var totalImg = ;
+	AmCharts.makeChart( "mapdiv", {
+	  type: "map",
+	  
+	  dataProvider: {
+	    "map": "worldLow",
+	    "id": "vilnius",
+        "color": "#000000",
+        "svgPath": targetSVG,
+        "title": "Vilnius",
+        "latitude": 54.6896,
+        "longitude": 25.2799,
+        "scale": 1.5,
+        "zoomLevel": 5,
+        "zoomLongitude": -95,
+        "zoomLatitude": 40,
+        images: markers.concat(animations),
+        lines: pipeLines
+        
+    },
+    listeners: [{
+    "event": "init",
+    "method": function(e) {
+      // Get the object
+      
+      //Roll the Dice
+	window.setInterval(function(){
+
+						randomAction(); 
+						}, 30000);
+  	}
+  	}]
+
+	} );
+
+	//Pick a random pipe number
+	function randomPipeID(){
+		//using the number of pipes availabe, pick one
+		var maxPipeID = 10;
+		var randPipeID = Math.floor(Math.random() * maxPipeID );
+		return randPipeID;
+	}
+	function updatePipeFlow(pipeID , factor){
+		//Take the pipe ID and change it by the factor
+
+	}
+	//A function that rolls a dice(s). The value determines which action occurs.
+	function randomAction(){
+		var diceFaces = 6;
+		var dice_1 = Math.floor(Math.random() * diceFaces + 1);
+
+		if(dice_1 === 1){
+			//Increase Flow rate of a random pipe by 10%
+			console.log(dice_1);
+			var pipeID = randomPipeID();
+			pipeRelationships[pipeID].performance = 1.1;
+			pipeLines[pipeID].title= pipeRelationships[pipeID].flowrate*pipeRelationships[pipeID].performance + ' barrels/day';
+			animations[pipeID].animationDuration= normVal/(pipeRelationships[pipeID].flowrate*pipeRelationships[pipeID].performance);
+
+			animations[pipeID].validate();
+			pipeLines[pipeID].validate();
+			
+			window.setTimeout(function(){ 
+				pipeRelationships[pipeID].performance = 1;
+				pipeLines[pipeID].title= pipeRelationships[pipeID].flowrate*pipeRelationships[pipeID].performance + ' barrels/day';
+				animations[pipeID].animationDuration= normVal/(pipeRelationships[pipeID].flowrate*pipeRelationships[pipeID].performance);
+				pipeLines[pipeID].validate();
+				animations[pipeID].validate();
+			}, 29000);
+
+		}
+		else if (dice_1 === 2){
+			console.log(dice_1);
+			//Increase flow rate of a random pipe by 15%
+			var pipeID = randomPipeID();
+			pipeRelationships[pipeID].performance = 1.15;
+			pipeLines[pipeID].title= pipeRelationships[pipeID].flowrate*pipeRelationships[pipeID].performance + ' barrels/day';
+			animations[pipeID].animationDuration= normVal/(pipeRelationships[pipeID].flowrate*pipeRelationships[pipeID].performance);
+
+			animations[pipeID].validate();
+			pipeLines[pipeID].validate();
+			
+			window.setTimeout(function(){ 
+				pipeRelationships[pipeID].performance = 1;
+				pipeLines[pipeID].title= pipeRelationships[pipeID].flowrate*pipeRelationships[pipeID].performance + ' barrels/day';
+				animations[pipeID].animationDuration= normVal/(pipeRelationships[pipeID].flowrate*pipeRelationships[pipeID].performance);
+				pipeLines[pipeID].validate();
+				animations[pipeID].validate();
+			}, 29000);
+		}
+		else if (dice_1 === 3){
+			console.log(dice_1);
+			//Decrease flow rate of a pipe by 20%
+			var pipeID = randomPipeID();
+			pipeRelationships[pipeID].performance = .8;
+			pipeLines[pipeID].title= pipeRelationships[pipeID].flowrate*pipeRelationships[pipeID].performance + ' barrels/day';
+			animations[pipeID].animationDuration= normVal/(pipeRelationships[pipeID].flowrate*pipeRelationships[pipeID].performance);
+			animations[pipeID].color = yellow;
+			pipeLines[pipeID].color = yellow;
+
+			animations[pipeID].validate();
+			pipeLines[pipeID].validate();
+
+			window.setTimeout(function(){ 
+				pipeRelationships[pipeID].performance = 1;
+				pipeLines[pipeID].title= pipeRelationships[pipeID].flowrate*pipeRelationships[pipeID].performance + ' barrels/day';
+				animations[pipeID].animationDuration= normVal/(pipeRelationships[pipeID].flowrate*pipeRelationships[pipeID].performance);
+				pipeLines[pipeID].color = green; 
+				animations[pipeID].color = green;
+
+				animations[pipeID].validate();
+				pipeLines[pipeID].validate();
+			}, 29000);
+		}
+		else if (dice_1 === 4){
+			console.log(dice_1);
+			//Turn a pipe off
+			var pipeID = randomPipeID();
+
+			pipeLines[pipeID].color = red;
+			pipeRelationships[pipeID].performance = 0;
+			pipeLines[pipeID].title= pipeRelationships[pipeID].flowrate*pipeRelationships[pipeID].performance + ' barrels/day';
+			animations[pipeID].animationDuration= normVal/(pipeRelationships[pipeID].flowrate*pipeRelationships[pipeID].performance);
+			animations[pipeID].color = red;
+			animations[pipeID].animateAlongLine = false;
+
+			animations[pipeID].validate(); 
+			pipeLines[pipeID].validate();
+
+			window.setTimeout(function(){ 
+				animations[pipeID].animateAlongLine = true; 
+				pipeLines[pipeID].color = green; 
+				animations[pipeID].color = green;
+				pipeRelationships[pipeID].performance = 1;
+				pipeLines[pipeID].title= pipeRelationships[pipeID].flowrate*pipeRelationships[pipeID].performance + ' barrels/day';
+				animations[pipeID].animationDuration= normVal/(pipeRelationships[pipeID].flowrate*pipeRelationships[pipeID].performance);
+
+				animations[pipeID].validate(); 
+				pipeLines[pipeID].validate()
+			}, 29000);
+
+		}
+		else if (dice_1 === 5){
+			console.log(dice_1);
+			//Open a ticket
+
+		}
+		else if (dice_1 === 6){
+			console.log(dice_1);
+			//Decrease flow rate of a pipe by 50%
+			var pipeID = randomPipeID();
+			pipeRelationships[pipeID].performance = 0.5;
+			pipeLines[pipeID].title= pipeRelationships[pipeID].flowrate*pipeRelationships[pipeID].performance + ' barrels/day';
+			animations[pipeID].animationDuration= normVal/(pipeRelationships[pipeID].flowrate*pipeRelationships[pipeID].performance);
+			pipeLines[pipeID].color = yellow;
+			animations[pipeID].color = yellow;
+
+			animations[pipeID].validate(); 
+			pipeLines[pipeID].validate();
+
+			window.setTimeout(function(){pipeID
+				animations[pipeID].color = green; 
+				pipeLines[pipeID].color = green;
+				pipeRelationships[pipeID].performance = 1;
+				pipeLines[pipeID].title= pipeRelationships[pipeID].flowrate*pipeRelationships[pipeID].performance + ' barrels/day';
+				animations[pipeID].animationDuration= normVal/(pipeRelationships[pipeID].flowrate*pipeRelationships[pipeID].performance);
+
+				animations[pipeID].validate(); 
+				pipeLines[pipeID].validate()
+			}, 29000);
+		}
+	}
+	
+	</script>
+</body>
+</html>

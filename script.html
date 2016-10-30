@@ -1,0 +1,52 @@
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+<script type="text/javascript">
+	//List of actions 
+	var 
+	//Pick a random pipe number
+	function randomPipeID(){
+		//using the number of pipes availabe, pick one
+		var maxPipeID = 10;
+		var randPipeID = Math.floor(Math.random() * maxPipeID + 1);
+		return randPipeID;
+	}
+	function updatePipeFlow(){
+
+	}
+	//A function that rolls a dice(s). The value determines which action occurs.
+	function randomAction(){
+		var diceFaces = 6;
+		var dice_1 = Math.floor(Math.random() * diceFaces + 1);
+
+		if(dice_1 === 1){
+			//Increase Flow rate of a random pipe by 10%
+
+		}
+		else if (dice_1 === 2){
+			//Increase flow rate of a random pipe by 15%
+		}
+		else if (dice_1 === 3){
+			//Decrease flow rate of a pipe by 20%
+		}
+		else if (dice_1 === 4){
+			//Turn a pipe off
+
+		}
+		else if (dice_1 === 5){
+			//Open a ticket
+		}
+		else if (dice_1 === 6){
+			//Decrease flow rate of a pipe by 50%
+		}
+
+		
+	};
+	for(var i=0; i<100; i++){
+		randomAction();
+	}
+</script>
+</body>
+</html>
